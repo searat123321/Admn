@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة شركة احمد فوزي حسن</title>
+    <title>إدارة شركة احمد فوزي حسن - المدير</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -36,7 +37,7 @@
     <div id="login-screen" class="w-full max-w-md glass-card rounded-[2rem] p-8 text-center" data-tilt>
         <img src="https://f.top4top.io/p_36418598n1.png" class="w-24 h-24 mx-auto mb-4">
         <h1 class="text-xl font-bold text-sky-800">لوحة تحكم المدير</h1>
-        <p class="text-gold-600 text-xs mb-6">شركة احمد فوزي حسن</p>
+        <p class="text-gold-600 text-xs mb-6">قاعدة البيانات: djfd-21786</p>
         <input type="text" id="username" placeholder="اسم المستخدم">
         <input type="password" id="password" placeholder="كلمة المرور">
         <button onclick="btnFlip(this); login()" class="w-full gold-bg font-bold py-3 rounded-xl mt-4">دخول</button>
@@ -99,7 +100,7 @@
         <div id="content-users" class="glass-card rounded-[2rem] p-8 hidden-tab">
             <h2 class="text-center text-sky-800 mb-6 font-bold">إضافة مستخدم جديد</h2>
             <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200 mb-4 text-xs text-gray-600">
-                ملاحظة: عند إضافة أول مستخدم، سيتم إنشاء قاعدة البيانات تلقائياً.
+                ملاحظة: عند إضافة أول مستخدم، سيتم إنشاء الجداول في قاعدة البيانات الجديدة تلقائياً.
             </div>
             <input type="text" id="new-username" placeholder="اسم المستخدم الجديد">
             <input type="password" id="new-password" placeholder="كلمة المرور">
@@ -150,8 +151,8 @@
         </div>
 
         <div class="glass-card rounded-[2rem] p-6 mb-10 text-center">
-            <h3 id="summary-title" class="font-bold mb-4 text-sky-900">آخر التحديثات</h3>
-            <div id="list-container" class="text-sm text-gray-500 italic">جاري الاتصال بقاعدة البيانات...</div>
+            <h3 id="summary-title" class="font-bold mb-4 text-sky-900">حالة الاتصال</h3>
+            <div id="list-container" class="text-sm text-green-600 font-bold">متصل بقاعدة البيانات: djfd-21786</div>
         </div>
     </div>
 
@@ -159,15 +160,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-        // --- إعدادات قاعدة البيانات ---
-        // تأكد من أن هذه البيانات تطابق مشروعك في Firebase
+        // --- إعدادات مشروعك الجديد (djfd-21786) ---
         const firebaseConfig = {
-            apiKey: "AIzaSyBYp2NDXCuWUUn6SkYZZUg5gdw7RV8Keps",
-            authDomain: "hbmar11111.firebaseapp.com",
-            projectId: "hbmar11111",
-            storageBucket: "hbmar11111.firebasestorage.app",
-            messagingSenderId: "3682727892",
-            appId: "1:3682727892:web:08a5f8de60a0a71cb3c841"
+            apiKey: "AIzaSyBvNAXCzcRDIicmn9UWtx0MO1bJ2rB-CLk",
+            authDomain: "djfd-21786.firebaseapp.com",
+            projectId: "djfd-21786",
+            storageBucket: "djfd-21786.firebasestorage.app",
+            messagingSenderId: "913320379210",
+            appId: "1:913320379210:web:9f96abdda4d4a3b111f7b3",
+            measurementId: "G-F0FTQ1Z706"
         };
 
         // تهيئة التطبيق
@@ -204,10 +205,8 @@
             document.body.classList.replace('items-center', 'items-start');
         }
 
-        // التحقق من الجلسة عند التحميل
         if (localStorage.getItem("ADMIN_LOGGED_IN") === "1") { showAdminPanel(); loadInitialData(); }
 
-        // --- التنقل بين التبويبات ---
         window.switchTab = (tab) => {
             ['content-accounts', 'content-users', 'content-cars'].forEach(id => document.getElementById(id).classList.add('hidden-tab'));
             document.getElementById('content-' + tab).classList.remove('hidden-tab');
@@ -216,14 +215,14 @@
             if(tab === "cars") renderList('cars');
         };
 
-        // --- إدارة المستخدمين (قاعدة البيانات: users) ---
+        // --- إدارة المستخدمين ---
         window.saveUser = async function() {
             const name = document.getElementById('new-username').value;
             const pass = document.getElementById('new-password').value;
             if(name && pass) {
                 try {
                     await addDoc(collection(db, "users"), { name, pass, createdAt: Date.now() });
-                    alert("تم إنشاء حساب المستخدم بنجاح");
+                    alert("تم إنشاء حساب المستخدم بنجاح في القاعدة الجديدة");
                     document.getElementById('new-username').value = "";
                     document.getElementById('new-password').value = "";
                 } catch (e) {
@@ -232,7 +231,7 @@
             } else { alert("يرجى ملء جميع الحقول"); }
         };
 
-        // --- إدارة الحسابات المالية (قاعدة البيانات: accounts) ---
+        // --- إدارة الحسابات المالية ---
         window.addTransaction = async function() {
             const user = document.getElementById('acc-user-select').value;
             const desc = document.getElementById('acc-desc').value;
@@ -247,7 +246,6 @@
                     date: new Date().toISOString().split('T')[0],
                     timestamp: Date.now()
                 });
-                // تنظيف الحقول
                 document.getElementById('acc-desc').value = "";
                 document.getElementById('acc-for').value = "";
                 document.getElementById('acc-against').value = "";
@@ -255,7 +253,7 @@
         };
 
         function fetchAccountStatement(user) {
-            if (activeAccountListener) activeAccountListener(); // إيقاف الاستماع السابق
+            if (activeAccountListener) activeAccountListener();
             
             const q = query(collection(db, "accounts"), where("user", "==", user));
             
@@ -265,14 +263,12 @@
                 let tFor = 0, tAgainst = 0, balance = 0;
                 let docs = [];
                 snap.forEach(d => docs.push(d.data()));
-                
-                // ترتيب العمليات حسب الوقت
                 docs.sort((a,b) => a.timestamp - b.timestamp);
                 
                 docs.forEach(item => {
                     tFor += item.for; 
                     tAgainst += item.against; 
-                    balance = tFor - tAgainst; // المعادلة: الواصل - المطلوب
+                    balance = tFor - tAgainst;
                     
                     tbody.innerHTML += `
                         <tr>
@@ -292,28 +288,20 @@
         window.clearUserAccount = async function() {
             const user = document.getElementById('acc-user-select').value;
             if(!user || !confirm("هل أنت متأكد؟ سيتم حذف جميع العمليات المالية لهذا المستخدم نهائياً!")) return;
-            
             const q = query(collection(db, "accounts"), where("user", "==", user));
             const snap = await getDocs(q);
             snap.forEach(async (d) => await deleteDoc(doc(db, "accounts", d.id)));
             alert("تم تصفية الحساب");
         };
 
-        // --- إدارة السيارات (قاعدة البيانات: cars) ---
-        
-        // معالجة الصور
+        // --- إدارة السيارات ---
         window.handleFileSelect = async (e) => {
             for(let f of e.target.files) {
-                // ضغط الصورة لتوفير المساحة في قاعدة البيانات
                 new Compressor(f, {
-                    quality: 0.2, // جودة منخفضة لتقليل الحجم
-                    maxWidth: 800,
+                    quality: 0.2, maxWidth: 800,
                     success(result) {
                         const reader = new FileReader();
-                        reader.onloadend = () => { 
-                            selectedImagesBase64.push(reader.result); 
-                            renderPreviews(); 
-                        };
+                        reader.onloadend = () => { selectedImagesBase64.push(reader.result); renderPreviews(); };
                         reader.readAsDataURL(result);
                     },
                     error(err) { console.error(err.message); },
@@ -323,10 +311,7 @@
 
         function renderPreviews() {
             document.getElementById('image-previews').innerHTML = selectedImagesBase64.map((img, i) => 
-                `<div class="preview-container">
-                    <img src="${img}" class="w-full h-full object-cover">
-                    <div class="delete-preview" onclick="removePreview(${i})"><i class="fas fa-times"></i></div>
-                </div>`
+                `<div class="preview-container"><img src="${img}" class="w-full h-full object-cover"><div class="delete-preview" onclick="removePreview(${i})"><i class="fas fa-times"></i></div></div>`
             ).join('');
         }
         window.removePreview = (i) => { selectedImagesBase64.splice(i, 1); renderPreviews(); };
@@ -348,8 +333,6 @@
 
         window.saveCarWithPhotos = async function() {
             const user = document.getElementById('car-user-select').value;
-            
-            // تجميع البيانات
             const payload = { 
                 carName: document.getElementById('car-name').value, 
                 type: document.getElementById('car-type').value, 
@@ -361,9 +344,7 @@
                 arrival: document.getElementById('car-arrival').value, 
                 shipping: document.getElementById('car-shipping').value, 
                 notes: document.getElementById('car-notes').value, 
-                user: user, 
-                imageUrls: selectedImagesBase64, 
-                updatedAt: Date.now() 
+                user: user, imageUrls: selectedImagesBase64, updatedAt: Date.now() 
             };
 
             try {
@@ -389,50 +370,30 @@
 
         // --- تحميل البيانات الأولية ---
         function loadInitialData() {
-            // تحميل قائمة المستخدمين
             onSnapshot(collection(db, "users"), (snap) => {
                 const carS = document.getElementById('car-user-select');
                 const accS = document.getElementById('acc-user-select');
-                
-                // حفظ الاختيار الحالي إذا وجد
                 const currentVal = accS.value;
-
                 let optionsHTML = '<option value="">اختر المستخدم</option>';
-                snap.forEach(d => { 
-                    const u = d.data().name; 
-                    optionsHTML += `<option value="${u}">${u}</option>`; 
-                });
-                
-                carS.innerHTML = optionsHTML; 
-                accS.innerHTML = optionsHTML;
-                
-                if(currentVal) accS.value = currentVal; // إعادة التحديد
-
+                snap.forEach(d => { const u = d.data().name; optionsHTML += `<option value="${u}">${u}</option>`; });
+                carS.innerHTML = optionsHTML; accS.innerHTML = optionsHTML;
+                if(currentVal) accS.value = currentVal;
                 accS.onchange = () => { if(accS.value) fetchAccountStatement(accS.value); };
                 carS.onchange = () => { renderUserCarsGrid(carS.value); };
-            }, (error) => {
-                console.error("خطأ في جلب المستخدمين:", error);
-                document.getElementById('list-container').innerHTML = "<span class='text-red-500'>تأكد من قواعد الأمان (Rules) في فايربيس</span>";
             });
 
-            // تحميل قائمة السيارات
             onSnapshot(collection(db, "cars"), (snap) => {
                 window.allCars = []; 
                 snap.forEach(d => window.allCars.push({ id: d.id, ...d.data() }));
-                
-                // تحديث العرض
                 renderUserCarsGrid(document.getElementById('car-user-select').value);
                 renderList('cars');
-                document.getElementById('list-container').innerHTML = `تم تحميل ${window.allCars.length} سيارة`;
             });
         }
 
         function renderUserCarsGrid(user){
             const grid = document.getElementById("user-cars-grid");
             if(!user) { grid.innerHTML = '<div class="text-gray-500 italic">اختر مستخدم لعرض سياراته</div>'; return; }
-            
             const cars = window.allCars.filter(c => c.user === user);
-            
             grid.innerHTML = cars.length ? cars.map(car => `
                 <button onclick="openEditCar('${car.id}')" class="text-right glass-card rounded-2xl p-3 flex gap-3 items-center w-full hover:bg-gray-50">
                     <div class="w-16 h-16 rounded-xl border border-yellow-300 overflow-hidden shrink-0">
@@ -449,24 +410,16 @@
 
         window.openEditCar = (id) => {
             const car = window.allCars.find(c => c.id === id);
-            window.editingCarId = id; 
-            selectedImagesBase64 = [...(car.imageUrls || [])]; 
-            renderPreviews();
-            
+            window.editingCarId = id; selectedImagesBase64 = [...(car.imageUrls || [])]; renderPreviews();
             ["car-name","car-type","car-model","car-chassis","car-container","car-lot","car-facade","car-arrival","car-shipping","car-notes"].forEach(field => {
-                const key = field.replace('car-', ''); // تحويل car-name إلى name
-                // البحث عن المفتاح مباشرة أو مع البادئة
+                const key = field.replace('car-', '');
                 document.getElementById(field).value = car[key] || car[field] || car[key.replace('name','carName')] || "";
             });
-            
             document.getElementById('car-form-title').innerText = "تعديل بيانات السيارة";
             document.getElementById('car-form-box').classList.remove('hidden');
             document.getElementById('delete-car-btn').classList.remove('hidden');
         };
-
-        function renderList(tab) {
-            // دالة مساعدة لتحديث حالة الاتصال فقط
-        }
+        function renderList(tab) {}
     </script>
 </body>
 </html>
