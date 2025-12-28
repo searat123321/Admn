@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركة احمد فوزي حسن - بوابة العميل</title>
+    <title>بوابة العملاء - شركة احمد فوزي حسن</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,7 +24,6 @@
         .hidden-screen { display: none !important; }
         .logo-img { width: 160px; height: 160px; object-fit: contain; margin: 0 auto; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
         
-        /* تنسيق جدول الحسابات */
         .account-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
         .account-table th { background: #1e3a8a; color: white; padding: 8px; border: 1px solid #FFD700; }
         .account-table td { padding: 8px; border: 1px solid #ddd; text-align: center; background: white; font-weight: bold; }
@@ -94,24 +94,23 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-        // --- تم وضع المفاتيح الجديدة التي أرسلتها ---
+        // --- إعدادات مشروعك الجديد (djfd-21786) ---
         const firebaseConfig = {
-            apiKey: "AIzaSyBYp2NDXCuWUUn6SkYZZUg5gdw7RV8Keps",
-            authDomain: "hbmar11111.firebaseapp.com",
-            projectId: "hbmar11111",
-            storageBucket: "hbmar11111.firebasestorage.app",
-            messagingSenderId: "3682727892",
-            appId: "1:3682727892:web:08a5f8de60a0a71cb3c841"
+            apiKey: "AIzaSyBvNAXCzcRDIicmn9UWtx0MO1bJ2rB-CLk",
+            authDomain: "djfd-21786.firebaseapp.com",
+            projectId: "djfd-21786",
+            storageBucket: "djfd-21786.firebasestorage.app",
+            messagingSenderId: "913320379210",
+            appId: "1:913320379210:web:9f96abdda4d4a3b111f7b3",
+            measurementId: "G-F0FTQ1Z706"
         };
         
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // تفعيل حركة الكروت
         VanillaTilt.init(document.querySelectorAll("[data-tilt]"), { max: 5, speed: 400 });
         window.btnFlip = (el) => gsap.to(el, { duration: 0.5, rotationY: 360, ease: "power2.out" });
 
-        // تسجيل الدخول
         window.attemptUserLogin = async function() {
             const userIn = document.getElementById('user-username').value;
             const passIn = document.getElementById('user-password').value;
@@ -119,18 +118,12 @@
             if(!userIn || !passIn) return alert("يرجى ملء الحقول");
 
             try {
-                // البحث عن المستخدم في قاعدة البيانات
                 const q = query(collection(db, "users"), where("name", "==", userIn), where("pass", "==", passIn));
                 const snap = await getDocs(q);
-                
-                if (!snap.empty) {
-                    proceed(userIn);
-                } else {
-                    document.getElementById('user-login-error').classList.remove('hidden');
-                }
+                if (!snap.empty) proceed(userIn);
+                else document.getElementById('user-login-error').classList.remove('hidden');
             } catch (error) {
-                alert("حدث خطأ في الاتصال، تأكد من الإنترنت");
-                console.error(error);
+                alert("حدث خطأ في الاتصال: " + error.message);
             }
         };
 
@@ -142,131 +135,67 @@
             loadCars(name);
         }
 
-        // تحميل كشف الحساب
         function loadAccount(userName) {
             const q = query(collection(db, "accounts"), where("user", "==", userName));
-            
             onSnapshot(q, (snap) => {
                 const tbody = document.getElementById('user-statement-body');
                 tbody.innerHTML = "";
                 let tFor = 0, tAgainst = 0, balance = 0;
                 let docs = [];
                 snap.forEach(d => docs.push(d.data()));
-                
-                // ترتيب حسب التاريخ
                 docs.sort((a,b) => a.timestamp - b.timestamp);
                 
-                if(docs.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='5'>لا توجد حسابات مسجلة</td></tr>";
-                }
+                if(docs.length === 0) tbody.innerHTML = "<tr><td colspan='5'>لا توجد حسابات مسجلة</td></tr>";
 
                 docs.forEach(item => {
-                    tFor += item.for; 
-                    tAgainst += item.against; 
-                    balance = tFor - tAgainst;
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${item.date}</td>
-                            <td>${item.desc}</td>
-                            <td class="text-red-600">${item.against}</td>
-                            <td class="text-green-600">${item.for}</td>
-                            <td style="direction:ltr">${balance}</td>
-                        </tr>`;
+                    tFor += item.for; tAgainst += item.against; balance = tFor - tAgainst;
+                    tbody.innerHTML += `<tr><td>${item.date}</td><td>${item.desc}</td><td class="text-red-600">${item.against}</td><td class="text-green-600">${item.for}</td><td style="direction:ltr">${balance}</td></tr>`;
                 });
-                
                 const balanceEl = document.getElementById('user-net-balance');
                 balanceEl.innerText = "الرصيد الإجمالي الحالي: " + balance.toLocaleString() + " د.ع";
-                
-                // تغيير اللون حسب الحالة
-                if(balance < 0) balanceEl.style.background = "#dc2626"; // أحمر اذا مطلوب
-                else balanceEl.style.background = "#22c55e"; // أخضر اذا له
+                if(balance < 0) balanceEl.style.background = "#dc2626";
+                else balanceEl.style.background = "#22c55e";
             });
         }
 
-        // تحميل السيارات
         async function loadCars(userName) {
             const container = document.getElementById('cars-container');
             container.innerHTML = '<div class="text-center w-full col-span-2 text-white">جاري التحميل...</div>';
-            
             const q = query(collection(db, "cars"), where("user", "==", userName));
-            
             onSnapshot(q, (snap) => {
                 container.innerHTML = '';
-                
-                if(snap.empty) {
-                    document.getElementById('no-cars-message').classList.remove('hidden');
-                    return;
-                }
+                if(snap.empty) { document.getElementById('no-cars-message').classList.remove('hidden'); return; }
 
                 snap.forEach(docSnap => {
                     const car = docSnap.data();
-                    // اختيار صورة عشوائية للغلاف أو صورة افتراضية
-                    const randomImg = car.imageUrls && car.imageUrls.length > 0 
-                        ? car.imageUrls[0] 
-                        : 'https://via.placeholder.com/150?text=No+Image';
-
+                    const randomImg = car.imageUrls && car.imageUrls.length > 0 ? car.imageUrls[0] : 'https://via.placeholder.com/150?text=No+Image';
                     const card = document.createElement('div');
                     card.className = 'glass-card p-3 rounded-3xl text-center cursor-pointer hover:scale-105 transition-transform bg-white/90';
-                    card.innerHTML = `
-                        <div class="img-container mb-2"><img src="${randomImg}"></div>
-                        <div class="font-bold gold-text text-xs">${car.carName || car.type || 'سيارة'}</div>
-                        <div class="text-[10px] text-sky-700">${car.model || '---'}</div>
-                    `;
+                    card.innerHTML = `<div class="img-container mb-2"><img src="${randomImg}"></div><div class="font-bold gold-text text-xs">${car.carName || car.type || 'سيارة'}</div><div class="text-[10px] text-sky-700">${car.model || '---'}</div>`;
                     card.onclick = () => showCarDetails(car);
                     container.appendChild(card);
                 });
             });
         }
 
-        // عرض التفاصيل
         window.showCarDetails = (car) => {
             const modal = document.getElementById('car-details-modal');
             const content = document.getElementById('modal-content');
-            
             let imagesHtml = '';
             if(car.imageUrls && car.imageUrls.length > 0) {
-                 imagesHtml = `<div class="grid grid-cols-3 gap-2 mt-6">
-                    ${car.imageUrls.map(url => `<div class="img-container"><img src="${url}" onclick="window.open('${url}', '_blank')"></div>`).join('')}
-                 </div>`;
+                 imagesHtml = `<div class="grid grid-cols-3 gap-2 mt-6">${car.imageUrls.map(url => `<div class="img-container"><img src="${url}" onclick="window.open('${url}', '_blank')"></div>`).join('')}</div>`;
             }
-            
-            content.innerHTML = `
-                <h2 class="text-2xl font-bold gold-text mb-4 text-center">${car.carName || car.type}</h2>
-                <div class="grid grid-cols-2 gap-3 car-info-grid text-[11px]">
-                    <div><span class="text-sky-600 block">رقم الشاصي</span><b>${car.chassis || '---'}</b></div>
-                    <div><span class="text-sky-600 block">رقم الحاوية</span><b>${car.container || '---'}</b></div>
-                    <div><span class="text-sky-600 block">رقم اللوت</span><b>${car.lot || '---'}</b></div>
-                    <div><span class="text-sky-600 block">واجهة السيارة</span><b>${car.facade || '---'}</b></div>
-                    <div><span class="text-sky-600 block">تاريخ الوصول</span><b>${car.arrival || '---'}</b></div>
-                    <div><span class="text-sky-600 block">الموديل</span><b>${car.model || '---'}</b></div>
-                </div>
-                <div class="mt-4 p-3 bg-blue-50 rounded-xl">
-                    <p class="text-[10px] gold-text font-bold">تفاصيل الشحن:</p>
-                    <p class="text-xs text-sky-900">${car.shipping || 'لا تتوفر تفاصيل'}</p>
-                    <p class="text-xs text-gray-500 mt-2">ملاحظات: ${car.notes || '-'}</p>
-                </div>
-                ${imagesHtml}
-                <button onclick='downloadImages(${JSON.stringify(car.imageUrls)}, "${car.carName}")' class="w-full btn-gold font-bold py-3 rounded-2xl mt-6 shadow-md"><i class="fas fa-download ml-2"></i>تحميل جميع الصور</button>
-            `;
+            content.innerHTML = `<h2 class="text-2xl font-bold gold-text mb-4 text-center">${car.carName || car.type}</h2><div class="grid grid-cols-2 gap-3 car-info-grid text-[11px]"><div><span class="text-sky-600 block">رقم الشاصي</span><b>${car.chassis || '---'}</b></div><div><span class="text-sky-600 block">رقم الحاوية</span><b>${car.container || '---'}</b></div><div><span class="text-sky-600 block">رقم اللوت</span><b>${car.lot || '---'}</b></div><div><span class="text-sky-600 block">واجهة السيارة</span><b>${car.facade || '---'}</b></div><div><span class="text-sky-600 block">تاريخ الوصول</span><b>${car.arrival || '---'}</b></div><div><span class="text-sky-600 block">الموديل</span><b>${car.model || '---'}</b></div></div><div class="mt-4 p-3 bg-blue-50 rounded-xl"><p class="text-[10px] gold-text font-bold">تفاصيل الشحن:</p><p class="text-xs text-sky-900">${car.shipping || 'لا تتوفر تفاصيل'}</p><p class="text-xs text-gray-500 mt-2">ملاحظات: ${car.notes || '-'}</p></div>${imagesHtml}<button onclick='downloadImages(${JSON.stringify(car.imageUrls)}, "${car.carName}")' class="w-full btn-gold font-bold py-3 rounded-2xl mt-6 shadow-md"><i class="fas fa-download ml-2"></i>تحميل جميع الصور</button>`;
             modal.classList.remove('hidden');
         };
 
-        window.closeCarDetails = () => {
-            document.getElementById('car-details-modal').classList.add('hidden');
-        };
-
-        // تحميل الصور
+        window.closeCarDetails = () => { document.getElementById('car-details-modal').classList.add('hidden'); };
         window.downloadImages = (urls, name) => {
             if(!urls || urls.length === 0) return alert("لا توجد صور للتحميل");
             if(confirm("هل تريد تحميل جميع الصور؟")) {
                 urls.forEach((url, index) => {
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.target = "_blank";
-                    link.download = `${name || 'car'}_image_${index + 1}`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    const link = document.createElement('a'); link.href = url; link.target = "_blank"; link.download = `${name || 'car'}_image_${index + 1}`;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 });
             }
         };
