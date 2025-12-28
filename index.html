@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شركة احمد فوزي حسن - بوابة العميل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #87CEEB 0%, #00BFFF 100%); min-height: 100vh; color: #1e3a8a; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 2px solid #FFD700; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .car-info-grid div { background: #f0f9ff; padding: 12px; border-radius: 12px; border-right: 4px solid #FFD700; border: 1px solid #bae6fd; }
+        .img-container { aspect-ratio: 1/1; overflow: hidden; border-radius: 15px; border: 2px solid #FFD700; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.3s; }
+        .img-container img:hover { transform: scale(1.05); }
+        .gold-text { color: #B8860B; }
+        .btn-gold { background: linear-gradient(to bottom, #FFD700, #DAA520); color: #1e3a8a; border: 1px solid #B8860B; }
+        input { background: #ffffff !important; border: 1px solid #87CEEB !important; color: #1e3a8a !important; pointer-events: auto !important; }
+        .hidden-screen { display: none !important; }
+        .logo-img { width: 160px; height: 160px; object-fit: contain; margin: 0 auto; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+        
+        /* تنسيق جدول الحسابات */
+        .account-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+        .account-table th { background: #1e3a8a; color: white; padding: 8px; border: 1px solid #FFD700; }
+        .account-table td { padding: 8px; border: 1px solid #ddd; text-align: center; background: white; font-weight: bold; }
+        .net-balance-box { background: #22c55e; color: white; padding: 10px; border-radius: 10px; text-align: center; margin-top: 5px; font-weight: bold; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <div id="user-login-screen" class="w-full max-w-md glass-card rounded-[2.5rem] p-8 text-center" data-tilt>
+        <div class="mb-6">
+            <img src="https://f.top4top.io/p_36418598n1.png" alt="شركة احمد فوزي حسن" class="logo-img">
+            <h1 class="text-2xl font-bold gold-text mt-4">شركة احمد فوزي حسن</h1>
+            <p class="text-sky-700 text-sm font-semibold italic">للتجارة العامة - بوابة العملاء</p>
+        </div>
+        <div class="space-y-4">
+            <input type="text" id="user-username" class="w-full px-4 py-4 rounded-2xl text-right outline-none" placeholder="اسم المستخدم">
+            <input type="password" id="user-password" class="w-full px-4 py-4 rounded-2xl text-right outline-none" placeholder="كلمة المرور">
+            <button onclick="btnFlip(this); attemptUserLogin()" class="w-full btn-gold font-bold py-4 rounded-2xl shadow-lg mt-4 text-lg">دخول النظام</button>
+            <p id="user-login-error" class="text-red-600 text-sm hidden mt-2 font-bold bg-red-100 p-2 rounded">بيانات الدخول غير صحيحة!</p>
+        </div>
+    </div>
+
+    <div id="user-dashboard" class="w-full max-w-3xl hidden-screen flex flex-col gap-6 py-4">
+        <div class="flex justify-between items-center px-4 glass-card p-4 rounded-2xl" data-tilt>
+            <div class="flex items-center gap-3">
+                <img src="https://f.top4top.io/p_36418598n1.png" class="w-16 h-16 object-contain">
+                <div>
+                    <h1 class="text-md font-bold gold-text leading-tight">شركة احمد فوزي حسن</h1>
+                    <p class="text-[11px] text-sky-800 font-bold">مرحباً بك: <span id="display-user-name" class="text-red-600"></span></p>
+                </div>
+            </div>
+            <button onclick="btnFlip(this); location.reload()" class="bg-white border border-red-200 text-red-600 p-3 rounded-xl shadow-sm hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> خروج</button>
+        </div>
+
+        <div class="glass-card rounded-[2rem] p-5">
+            <h3 class="font-bold gold-text mb-3 text-center border-b pb-2"><i class="fas fa-file-invoice-dollar ml-2"></i>كشف حسابك المالي</h3>
+            <div class="overflow-x-auto">
+                <table class="account-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>التفاصيل</th>
+                            <th>المبلغ المطلوب</th>
+                            <th>المبلغ الواصل</th>
+                            <th>الرصيد</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-statement-body"></tbody>
+                </table>
+            </div>
+            <div id="user-net-balance" class="net-balance-box">جاري حساب الرصيد...</div>
+        </div>
+
+        <h3 class="font-bold text-white text-center text-lg mt-4 shadow-text"><i class="fas fa-car ml-2"></i>سياراتك في الشركة</h3>
+        <div id="cars-container" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            </div>
+        <div id="no-cars-message" class="hidden text-center text-white font-bold">لا توجد سيارات مسجلة باسمك حالياً</div>
+    </div>
+
+    <div id="car-details-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] p-6 relative">
+            <button onclick="closeCarDetails()" class="absolute top-4 left-4 bg-red-600 text-white w-10 h-10 rounded-full z-10 hover:bg-red-700 transition"><i class="fas fa-times"></i></button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        // --- تم وضع المفاتيح الجديدة التي أرسلتها ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYp2NDXCuWUUn6SkYZZUg5gdw7RV8Keps",
+            authDomain: "hbmar11111.firebaseapp.com",
+            projectId: "hbmar11111",
+            storageBucket: "hbmar11111.firebasestorage.app",
+            messagingSenderId: "3682727892",
+            appId: "1:3682727892:web:08a5f8de60a0a71cb3c841"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // تفعيل حركة الكروت
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), { max: 5, speed: 400 });
+        window.btnFlip = (el) => gsap.to(el, { duration: 0.5, rotationY: 360, ease: "power2.out" });
+
+        // تسجيل الدخول
+        window.attemptUserLogin = async function() {
+            const userIn = document.getElementById('user-username').value;
+            const passIn = document.getElementById('user-password').value;
+            
+            if(!userIn || !passIn) return alert("يرجى ملء الحقول");
+
+            try {
+                // البحث عن المستخدم في قاعدة البيانات
+                const q = query(collection(db, "users"), where("name", "==", userIn), where("pass", "==", passIn));
+                const snap = await getDocs(q);
+                
+                if (!snap.empty) {
+                    proceed(userIn);
+                } else {
+                    document.getElementById('user-login-error').classList.remove('hidden');
+                }
+            } catch (error) {
+                alert("حدث خطأ في الاتصال، تأكد من الإنترنت");
+                console.error(error);
+            }
+        };
+
+        function proceed(name) {
+            document.getElementById('user-login-screen').classList.add('hidden-screen');
+            document.getElementById('user-dashboard').classList.remove('hidden-screen');
+            document.getElementById('display-user-name').innerText = name;
+            loadAccount(name);
+            loadCars(name);
+        }
+
+        // تحميل كشف الحساب
+        function loadAccount(userName) {
+            const q = query(collection(db, "accounts"), where("user", "==", userName));
+            
+            onSnapshot(q, (snap) => {
+                const tbody = document.getElementById('user-statement-body');
+                tbody.innerHTML = "";
+                let tFor = 0, tAgainst = 0, balance = 0;
+                let docs = [];
+                snap.forEach(d => docs.push(d.data()));
+                
+                // ترتيب حسب التاريخ
+                docs.sort((a,b) => a.timestamp - b.timestamp);
+                
+                if(docs.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5'>لا توجد حسابات مسجلة</td></tr>";
+                }
+
+                docs.forEach(item => {
+                    tFor += item.for; 
+                    tAgainst += item.against; 
+                    balance = tFor - tAgainst;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td>${item.desc}</td>
+                            <td class="text-red-600">${item.against}</td>
+                            <td class="text-green-600">${item.for}</td>
+                            <td style="direction:ltr">${balance}</td>
+                        </tr>`;
+                });
+                
+                const balanceEl = document.getElementById('user-net-balance');
+                balanceEl.innerText = "الرصيد الإجمالي الحالي: " + balance.toLocaleString() + " د.ع";
+                
+                // تغيير اللون حسب الحالة
+                if(balance < 0) balanceEl.style.background = "#dc2626"; // أحمر اذا مطلوب
+                else balanceEl.style.background = "#22c55e"; // أخضر اذا له
+            });
+        }
+
+        // تحميل السيارات
+        async function loadCars(userName) {
+            const container = document.getElementById('cars-container');
+            container.innerHTML = '<div class="text-center w-full col-span-2 text-white">جاري التحميل...</div>';
+            
+            const q = query(collection(db, "cars"), where("user", "==", userName));
+            
+            onSnapshot(q, (snap) => {
+                container.innerHTML = '';
+                
+                if(snap.empty) {
+                    document.getElementById('no-cars-message').classList.remove('hidden');
+                    return;
+                }
+
+                snap.forEach(docSnap => {
+                    const car = docSnap.data();
+                    // اختيار صورة عشوائية للغلاف أو صورة افتراضية
+                    const randomImg = car.imageUrls && car.imageUrls.length > 0 
+                        ? car.imageUrls[0] 
+                        : 'https://via.placeholder.com/150?text=No+Image';
+
+                    const card = document.createElement('div');
+                    card.className = 'glass-card p-3 rounded-3xl text-center cursor-pointer hover:scale-105 transition-transform bg-white/90';
+                    card.innerHTML = `
+                        <div class="img-container mb-2"><img src="${randomImg}"></div>
+                        <div class="font-bold gold-text text-xs">${car.carName || car.type || 'سيارة'}</div>
+                        <div class="text-[10px] text-sky-700">${car.model || '---'}</div>
+                    `;
+                    card.onclick = () => showCarDetails(car);
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        // عرض التفاصيل
+        window.showCarDetails = (car) => {
+            const modal = document.getElementById('car-details-modal');
+            const content = document.getElementById('modal-content');
+            
+            let imagesHtml = '';
+            if(car.imageUrls && car.imageUrls.length > 0) {
+                 imagesHtml = `<div class="grid grid-cols-3 gap-2 mt-6">
+                    ${car.imageUrls.map(url => `<div class="img-container"><img src="${url}" onclick="window.open('${url}', '_blank')"></div>`).join('')}
+                 </div>`;
+            }
+            
+            content.innerHTML = `
+                <h2 class="text-2xl font-bold gold-text mb-4 text-center">${car.carName || car.type}</h2>
+                <div class="grid grid-cols-2 gap-3 car-info-grid text-[11px]">
+                    <div><span class="text-sky-600 block">رقم الشاصي</span><b>${car.chassis || '---'}</b></div>
+                    <div><span class="text-sky-600 block">رقم الحاوية</span><b>${car.container || '---'}</b></div>
+                    <div><span class="text-sky-600 block">رقم اللوت</span><b>${car.lot || '---'}</b></div>
+                    <div><span class="text-sky-600 block">واجهة السيارة</span><b>${car.facade || '---'}</b></div>
+                    <div><span class="text-sky-600 block">تاريخ الوصول</span><b>${car.arrival || '---'}</b></div>
+                    <div><span class="text-sky-600 block">الموديل</span><b>${car.model || '---'}</b></div>
+                </div>
+                <div class="mt-4 p-3 bg-blue-50 rounded-xl">
+                    <p class="text-[10px] gold-text font-bold">تفاصيل الشحن:</p>
+                    <p class="text-xs text-sky-900">${car.shipping || 'لا تتوفر تفاصيل'}</p>
+                    <p class="text-xs text-gray-500 mt-2">ملاحظات: ${car.notes || '-'}</p>
+                </div>
+                ${imagesHtml}
+                <button onclick='downloadImages(${JSON.stringify(car.imageUrls)}, "${car.carName}")' class="w-full btn-gold font-bold py-3 rounded-2xl mt-6 shadow-md"><i class="fas fa-download ml-2"></i>تحميل جميع الصور</button>
+            `;
+            modal.classList.remove('hidden');
+        };
+
+        window.closeCarDetails = () => {
+            document.getElementById('car-details-modal').classList.add('hidden');
+        };
+
+        // تحميل الصور
+        window.downloadImages = (urls, name) => {
+            if(!urls || urls.length === 0) return alert("لا توجد صور للتحميل");
+            if(confirm("هل تريد تحميل جميع الصور؟")) {
+                urls.forEach((url, index) => {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.target = "_blank";
+                    link.download = `${name || 'car'}_image_${index + 1}`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+        };
+    </script>
+</body>
+</html>
